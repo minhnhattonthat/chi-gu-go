@@ -1,0 +1,48 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.nhatton.ggtalkvn"
+        minSdkVersion 16
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "ADMOB_APP_ID", "\"${admob_app_id}\"")
+        resValue "string", "banner_ad_unit_id", banner_ad_unit_id
+    }
+    signingConfigs {
+        release {
+            storeFile file(release_store_file)
+            storePassword release_store_password
+            keyAlias release_key_alias
+            keyPassword release_key_password
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.android.support:support-v4:26.1.0'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.android.gms:play-services-ads:15.0.1'
+}
+
+apply plugin: 'com.google.gms.google-services'

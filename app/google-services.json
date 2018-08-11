@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "142033442928",
+    "firebase_url": "https://gu-go-noi-tieng-viet.firebaseio.com",
+    "project_id": "gu-go-noi-tieng-viet",
+    "storage_bucket": "gu-go-noi-tieng-viet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:142033442928:android:c804f50ee24ef26b",
+        "android_client_info": {
+          "package_name": "com.nhatton.ggtalkvn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "142033442928-2099plt90qcr28tpnq9p8ce98eipbkvl.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "142033442928-2099plt90qcr28tpnq9p8ce98eipbkvl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvCQ-a70Bzk8_ur_bNQFVJt9ICb9I5d0k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

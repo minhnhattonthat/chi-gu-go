@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Chị Gu Gồ</string>
+    <string name="no_sound">Trống</string>
+    <string name="icon">Icon</string>
+
+    <string name="title_activity_fullscreen">Toàn màn hình</string>
+    <string name="input_hint">Nhập câu muốn đọc</string>
+    <string name="read">Đọc</string>
+    <string name="enter_fullscreen">Toàn màn hình</string>
+    <string name="pitch">Cao độ </string>
+    <string name="vol">Âm lượng</string>
+    <string name="action_save">Lưu lại</string>
+    <string name="title_activity_collection">Bộ sưu tập</string>
+    <string name="toast_saved">Đã lưu</string>
+    <string name="alert_delete">Xóa không?</string>
+    <string name="toast_deleted">Đã xóa</string>
+    <string name="alert_delete_title">Xóa</string>
+    <string name="alert_delete_ok">Xóa</string>
+    <string name="alert_delete_cancel">Không</string>
+    <string name="toast_exist">Đã tồn tại</string>
+    <string name="speed">Tốc độ</string>
+    <string name="action_list">Toàn bộ</string>
+</resources>
