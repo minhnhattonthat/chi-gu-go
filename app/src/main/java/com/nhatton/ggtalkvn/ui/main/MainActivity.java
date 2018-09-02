@@ -3,14 +3,10 @@ package com.nhatton.ggtalkvn.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
-import android.media.AudioManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -18,144 +14,68 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.nhatton.ggtalkvn.BuildConfig;
 import com.nhatton.ggtalkvn.R;
-import com.nhatton.ggtalkvn.data.SoundDbService;
-import com.nhatton.ggtalkvn.ui.list.CollectionActivity;
+import com.nhatton.ggtalkvn.data.Sound;
+import com.nhatton.ggtalkvn.tts.TTSService;
+import com.nhatton.ggtalkvn.ui.BaseActivity;
+import com.nhatton.ggtalkvn.ui.camera.CameraActivity;
+import com.nhatton.ggtalkvn.ui.fullscreen.FullscreenActivity;
 
-import java.util.Locale;
+import java.util.Collections;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
-    public static final String LOCALE_AS_STRING = "vi_VN";
-    private static final int SMOOTHNESS = 10;
+import static com.nhatton.ggtalkvn.ui.fullscreen.FullscreenActivity.KEY_SOUND;
+
+public class MainActivity extends BaseActivity {
+
     private static final int MY_DATA_CHECK_CODE = 0;
 
-    private EditText txtText;
+    private static final String TAG = "MainActivity";
+    public SoundAdapter mAdapter;
     private TextView pitchValue;
     private TextView speedValue;
-
-    public static TextToSpeech tts;
+    private EditText inputTextView;
+    private float speedFloatVal;
+    private float pitchFloatVal;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
+        initAds();
 
         //check for TTS resource available
         Intent checkIntent = new Intent();
         checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         startActivityForResult(checkIntent, MY_DATA_CHECK_CODE);
 
-        ImageButton btnSpeak = findViewById(R.id.input_button);
-        btnSpeak.setOnClickListener(new View.OnClickListener() {
+        initTextInput();
 
-            @Override
-            public void onClick(View v) {
-                String sentence = txtText.getText().toString();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    tts.speak(sentence, TextToSpeech.QUEUE_FLUSH, null, null);
-                } else {
-                    tts.speak(sentence, TextToSpeech.QUEUE_FLUSH, null);
-                }
-            }
-        });
+        initReadButton();
 
-        txtText = findViewById(R.id.input_text);
-        txtText.requestFocus();
+        initSpeakButton();
 
-        pitchValue = findViewById(R.id.pitch_value);
-        pitchValue.setText("1.0");
+        initPitchPanel();
 
-        SeekBar pitchBar = findViewById(R.id.pitch_bar);
-        pitchBar.setOnSeekBarChangeListener(new SeekBar.
-                OnSeekBarChangeListener() {
+        initSpeedPanel();
 
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                float floatVal = .25f * i + 0.5f;
-                pitchValue.setText(String.valueOf(floatVal));
-                tts.setPitch(floatVal);
-            }
+        initListView();
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-
-        });
-
-        speedValue = findViewById(R.id.speed_value);
-        speedValue.setText("1.0");
-
-        SeekBar speedBar = findViewById(R.id.speed_bar);
-        speedBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                float floatVal = .5f * i + 0.5f;
-                speedValue.setText(String.valueOf(floatVal));
-                tts.setSpeechRate(floatVal);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        SeekBar volControl = findViewById(R.id.vol_bar);
-        final AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        assert audioManager != null;
-        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        int curVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-
-        volControl.setMax(maxVolume * SMOOTHNESS);
-        volControl.setProgress(curVolume * SMOOTHNESS);
-        volControl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress / SMOOTHNESS, 0);
-            }
-        });
-
+        fillData();
     }
 
     @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS) {
-            int result = tts.setLanguage(new Locale(LOCALE_AS_STRING));
-            if (result == TextToSpeech.LANG_MISSING_DATA
-                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("TTS", "This Language is not supported");
-            }
-        } else {
-            Log.e("TTS", "Initialization Failed!");
-        }
-    }
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MY_DATA_CHECK_CODE) {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-                tts = new TextToSpeech(this, this);
+                TTSService.initialize(this);
+                this.getLifecycle().addObserver(new TTSService.TTSLifecycleObserver());
             } else {
                 Intent installIntent = new Intent();
                 installIntent.setAction(
@@ -163,13 +83,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 startActivity(installIntent);
             }
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
 
     @Override
@@ -191,32 +104,158 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         return super.dispatchTouchEvent(event);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_save) {
-            String description = txtText.getText().toString();
-            SoundDbService mDbHelper = new SoundDbService(this);
-            long t = mDbHelper.open().createSound(description);
+    private void initAds() {
+        MobileAds.initialize(this, BuildConfig.ADMOB_APP_ID);
 
-            if (t < 0) {
-                Toast.makeText(this, R.string.toast_exist, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, R.string.toast_saved, Toast.LENGTH_SHORT).show();
+        AdView mAdView = findViewById(R.id.ad_view);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+    }
+
+    private void initTextInput() {
+        inputTextView = findViewById(R.id.input_text);
+
+        findViewById(R.id.clear_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputTextView.setText("");
+            }
+        });
+    }
+
+    private void initReadButton() {
+        findViewById(R.id.read_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CameraActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void initSpeakButton() {
+        ImageButton speakButton = findViewById(R.id.input_button);
+        speakButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                String sentence = inputTextView.getText().toString();
+
+                if (sentence.isEmpty()) return;
+
+                Sound sound = new Sound.Builder()
+                        .text(sentence)
+                        .pitch(pitchFloatVal)
+                        .speed(speedFloatVal)
+                        .build();
+
+                TTSService.getInstance().speak(sound);
+
+                mAdapter.insert(sound);
+
+                TTSService.getInstance().writeToFireStore(sound, MainActivity.this);
+            }
+        });
+    }
+
+    private void initPitchPanel() {
+        pitchValue = findViewById(R.id.pitch_value);
+        pitchValue.setText("1.0");
+
+        SeekBar pitchBar = findViewById(R.id.pitch_bar);
+        pitchBar.setOnSeekBarChangeListener(new SeekBar.
+                OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                pitchFloatVal = .25f * i + 0.5f;
+                pitchValue.setText(String.valueOf(pitchFloatVal));
             }
 
-            mDbHelper.close();
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
-        } else if (item.getItemId() == R.id.action_list) {
-            Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
-            startActivity(intent);
-        }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
 
-        return super.onOptionsItemSelected(item);
+        });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        tts.shutdown();
+    private void initSpeedPanel() {
+        speedValue = findViewById(R.id.speed_value);
+        speedValue.setText("1.0");
+
+        SeekBar speedBar = findViewById(R.id.speed_bar);
+        speedBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                speedFloatVal = .5f * i + 0.5f;
+                speedValue.setText(String.valueOf(speedFloatVal));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
+
+    private void initListView() {
+        RecyclerView listView = findViewById(R.id.sound_list);
+        mAdapter = new SoundAdapter(daoSession, new SoundCallback() {
+            @Override
+            public void onSoundSelected(Sound sound) {
+                TTSService.getInstance().speak(sound);
+            }
+
+            @Override
+            public void onFullScreen(Sound sound) {
+                Intent intent = new Intent(MainActivity.this, FullscreenActivity.class);
+                intent.putExtra(KEY_SOUND, sound);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onExport(Sound sound) {
+                TTSService.getInstance().export(sound, MainActivity.this);
+            }
+        });
+        listView.setAdapter(mAdapter);
+
+        ItemTouchHelper touchHelper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0,
+                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView,
+                                          RecyclerView.ViewHolder viewHolder,
+                                          RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder,
+                                         int direction) {
+                        int position = viewHolder.getAdapterPosition();
+                        mAdapter.remove(position);
+                    }
+                });
+
+        touchHelper.attachToRecyclerView(listView);
+    }
+
+    private void fillData() {
+        List<Sound> sounds = daoSession.getSoundDao().loadAll();
+        Collections.sort(sounds);
+        Collections.reverse(sounds);
+        mAdapter.setList(sounds);
+    }
+
 }

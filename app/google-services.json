@@ -15,8 +15,12 @@
       },
       "oauth_client": [
         {
-          "client_id": "142033442928-2099plt90qcr28tpnq9p8ce98eipbkvl.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "142033442928-nsac8urj8ht4n88rpuiajgiv1tinddce.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nhatton.ggtalkvn",
+            "certificate_hash": "a4d45a8ecd8697808fc11960e7814ee239cd6924"
+          }
         },
         {
           "client_id": "142033442928-2099plt90qcr28tpnq9p8ce98eipbkvl.apps.googleusercontent.com",
@@ -33,13 +37,19 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "142033442928-2099plt90qcr28tpnq9p8ce98eipbkvl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-1204320026620700~5004463561"
     }
   ],
   "configuration_version": "1"

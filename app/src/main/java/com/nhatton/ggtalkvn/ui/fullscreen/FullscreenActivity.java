@@ -1,22 +1,19 @@
 package com.nhatton.ggtalkvn.ui.fullscreen;
 
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.nhatton.ggtalkvn.R;
-
-import static com.nhatton.ggtalkvn.ui.main.MainActivity.tts;
+import com.nhatton.ggtalkvn.data.Sound;
+import com.nhatton.ggtalkvn.tts.TTSService;
 
 public class FullscreenActivity extends Activity {
 
-    public static final String KEY_TEXT = "toFullScreen";
-    private String message = "";
+    public static final String KEY_SOUND = "sound";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,25 +24,31 @@ public class FullscreenActivity extends Activity {
 
         setContentView(R.layout.activity_fullscreen);
 
+        Sound sound = null;
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            message = extras.getString(KEY_TEXT);
+            sound = extras.getParcelable(KEY_SOUND);
         }
 
+        if (sound != null) {
+            init(sound);
+        }
+
+    }
+
+    private void init(final Sound sound) {
         TextView textView = findViewById(R.id.fullscreen_text);
+
+        final String message = sound.getText();
 
         textView.setText(message);
 
         findViewById(R.id.fullscreen_content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, null);
-                } else {
-                    tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
-                }
+                TTSService.getInstance().speak(sound);
             }
         });
-
     }
 }

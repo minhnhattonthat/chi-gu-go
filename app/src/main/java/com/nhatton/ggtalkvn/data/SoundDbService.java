@@ -49,10 +49,10 @@ public class SoundDbService {
      * Constructor - takes the context to allow the database to be
      * opened/created
      *
-     * @param ctx the Context within which to work
+     * @param context the Context within which to work
      */
-    public SoundDbService(Context ctx) {
-        this.mContext = ctx;
+    public SoundDbService(Context context) {
+        this.mContext = context;
     }
 
     /**

@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Chị Gu Gồ</string>
+    <string name="app_name">Chị <b>Gu Gồ</b></string>
     <string name="no_sound">Trống</string>
     <string name="icon">Icon</string>
 
     <string name="title_activity_fullscreen">Toàn màn hình</string>
-    <string name="input_hint">Nhập câu muốn đọc</string>
+    <string name="input_hint">Nhập câu muốn nói</string>
     <string name="read">Đọc</string>
     <string name="enter_fullscreen">Toàn màn hình</string>
     <string name="pitch">Cao độ </string>
@@ -20,4 +20,22 @@
     <string name="toast_exist">Đã tồn tại</string>
     <string name="speed">Tốc độ</string>
     <string name="action_list">Toàn bộ</string>
+    <string name="text_speak">Nói</string>
+    <string name="toast_exported">Đã xuất</string>
+    <string name="desc_fullscreen">Toàn màn hình</string>
+    <string name="desc_export">Xuất file</string>
+
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">Ocr dependencies cannot be downloaded due to low device storage</string>
+    <string name="title_activity_main">Ocr Detector Sample</string>
+    <string name="ocr_header">Click &quot;Detect Text&quot; to detect text</string>
+    <string name="read_text">Detect Text</string>
+    <string name="auto_focus">Auto Focus</string>
+    <string name="use_flash">Use Flash</string>
+    <string name="ocr_success">Text read successfully</string>
+    <string name="ocr_failure">No text captured</string>
+    <string name="ocr_error">"Error reading text: %1$s"</string>
+    <string name="ok">OK</string>
+    <string name="text_read">Đọc</string>
 </resources>

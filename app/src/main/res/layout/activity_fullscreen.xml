@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fullscreen_content"
     android:layout_width="match_parent"
@@ -7,14 +8,17 @@
     android:orientation="vertical"
     tools:context="com.nhatton.ggtalkvn.ui.fullscreen.FullscreenActivity">
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/fullscreen_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:keepScreenOn="true"
+        android:padding="10dp"
         android:textColor="@color/white"
-        android:textSize="50sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:autoSizeTextType="uniform"
+        tools:ignore="MissingPrefix"
+        tools:text="Test text" />
 
 </LinearLayout>
